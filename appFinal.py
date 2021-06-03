@@ -29,6 +29,27 @@ def create_session(username):
 def is_session_valid(user_uuid):
     return user_uuid in users_sessions
 
+# create simple user
+@app.route('/createSimpleUser', methods=['POST'])
+def create_simple_user():
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "name" in data or not "e-mail" in data or not "password" in data:
+        return Response("Information incomplete",status=500,mimetype="application/json")
+    # if user not in database already
+    if users.find({"e-mail":data["e-mail"]}).count() == 0 :
+	# update category for simple user
+        category = {'category':'simple user'}
+        data.update(category)
+        users.insert_one(data) # add user
+        return Response("User "+data['name']+" was added.", mimetype='application/json', status=200) # return success message
+    else: # id user already in database 
+        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
 
 # Get users
 @app.route('/getallusers', methods=['GET'])
