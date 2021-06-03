@@ -72,6 +72,26 @@ def login():
     else:
         return Response("Wrong email or password.",mimetype='application/json', status=400) # return error message
 
+
+# add product
+@app.route('/addProduct', methods=['POST'])
+def add_product():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "id" in data or not "name" in data or not "price" in data or not "category" in data or not "stock" in data or not "description" in data:
+        return Response("Id, Name, price, description, category and stock must be inserted.")
+    if products.find({"id":data["id"]}).count() == 0 :
+        products.insert_one(data) # add product
+        return Response('Product '+data['name']+' was added to database.', mimetype='application/json', status=200) # return success message
+    else:
+        return Response('Product with id '+data['id']+' already exists in database.', mimetype='application/json', status=200) # return success message
+
 # Get users
 @app.route('/getallusers', methods=['GET'])
 def get_all_users():
