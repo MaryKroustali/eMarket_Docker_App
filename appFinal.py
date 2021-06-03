@@ -92,6 +92,31 @@ def add_product():
     else:
         return Response('Product with id '+data['id']+' already exists in database.', mimetype='application/json', status=200) # return success message
 
+# delete product
+@app.route('/deleteProduct', methods=['DELETE'])
+def delete_product():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if no id given
+    if not "id" in data:
+        return Response("No product specified by id!",status=500,mimetype="application/json")
+    product = products.find_one({'id':data["id"]})
+        # if product exists delete
+    if product != None:
+        # delete product
+        products.delete_one(product)
+        return Response ("Product with id "+product["id"] + " was deleted.", status=200, mimetype='application/json')
+    else: # if no student product found
+        # print message
+        return Response("No product found with id " + data["id"])
+
+
 # Get users
 @app.route('/getallusers', methods=['GET'])
 def get_all_users():
