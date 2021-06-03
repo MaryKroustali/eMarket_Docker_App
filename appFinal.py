@@ -51,6 +51,28 @@ def get_all_products():
     return jsonify(output) # original format
     # return json.dumps(json.loads(json_util.dumps(output))) # for ids
 
+# Create admin
+@app.route('/createAdmin', methods=['POST'])
+def create_admin():
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "name" in data or not "e-mail" in data or not "password" in data:
+        return Response("Information incomplete",status=500,mimetype="application/json")
+    # if admin not in database
+    if users.find({"e-mail":data["e-mail"]}).count() == 0 :
+	# update
+        category = {'category':'admin'}
+        data.update(category)
+        users.insert_one(data) # add admin
+        return Response(data['name']+" was added as an admin", mimetype='application/json', status=200) # return success message
+    else: # id user already in database 
+        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
+
 
 # Εκτέλεση flask service σε debug mode, στην port 5000. 
 if __name__ == '__main__':
