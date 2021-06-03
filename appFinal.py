@@ -116,6 +116,40 @@ def delete_product():
         # print message
         return Response("No product found with id " + data["id"])
 
+# update product
+@app.route('/updateProduct', methods=['UPDATE'])
+def update_product():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if no id given
+    if not "id" in data:
+        return Response("No product specified by id!",status=500,mimetype="application/json")
+     # find product
+    product = products.find_one({'id':data["id"]})
+     # if product exists
+    if product != None:
+        # update product by name
+        if "name" in data:
+            products.update_one({'id':data["id"]},{'$set': {'name':data["name"]}})
+            # update product by price
+        if "price" in data:
+            products.update_one({'id':data["id"]},{'$set': {'price':data["price"]}})
+            # update product by description
+        if "description" in data:
+            products.update_one({'id':data["id"]},{'$set': {'description':data["description"]}})
+            # update product by stock
+        if "stock" in data:
+            products.update_one({'id':data["id"]},{'$set': {'stock':data["stock"]}})
+            # return success message
+        return Response("Product "+product["id"]+" updated successfully.", status=200, mimetype='application/json')
+    else: # if no product found
+            return Response("No product with id:" + data["id"])
 
 # Get users
 @app.route('/getallusers', methods=['GET'])
