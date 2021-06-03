@@ -51,6 +51,27 @@ def create_simple_user():
     else: # id user already in database 
         return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
 
+# login user
+@app.route('/login', methods=['POST'])
+def login():
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if email or password is not given
+    if not "e-mail" in data or not "password" in data:
+        return Response("Information incomplete",status=500,mimetype="application/json")
+    # if email, password found in database
+    if users.find_one({"e-mail":data["e-mail"], "password":data["password"]}):
+	# call function create session, return uuid
+        user_uuid = create_session(data["e-mail"])
+        return Response('Userid for user ' + data['e-mail']+ ' : '+ user_uuid, mimetype='application/json',status=200) # return success message
+    else:
+        return Response("Wrong email or password.",mimetype='application/json', status=400) # return error message
+
 # Get users
 @app.route('/getallusers', methods=['GET'])
 def get_all_users():
