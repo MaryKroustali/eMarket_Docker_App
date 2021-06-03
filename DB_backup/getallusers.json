@@ -1,0 +1,123 @@
+[
+  {
+    "_id": null, 
+    "category": "admin", 
+    "e-mail": "john@mail.com", 
+    "name": "John Doe", 
+    "password": "itsme"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "1": "10", 
+      "3": "1", 
+      "6": "2"
+    }, 
+    "category": "simple user", 
+    "e-mail": "karenmc@hotmail.com", 
+    "name": "Karen McDonald", 
+    "password": "Nhsydjs"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "6": "5", 
+      "7": "1", 
+      "8": "2"
+    }, 
+    "category": "simple user", 
+    "e-mail": "marshalle@mail.com", 
+    "name": "Eve Marshall", 
+    "password": "marshalls234"
+  }, 
+  {
+    "_id": null, 
+    "category": "admin", 
+    "e-mail": "maria@mail.org", 
+    "name": "Maria Kroustali", 
+    "password": "123"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "1": "5", 
+      "8": "4"
+    }, 
+    "category": "simple user", 
+    "e-mail": "raemiond@mail.com", 
+    "name": "Natasha Reamond", 
+    "password": "364758"
+  }, 
+  {
+    "_id": null, 
+    "category": "simple user", 
+    "e-mail": "newton@mail.com", 
+    "name": "Newton Edmond", 
+    "password": "mypassword"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "1": "5"
+    }, 
+    "category": "simple user", 
+    "e-mail": "margot@mail.com", 
+    "name": "Margot Il", 
+    "password": "mypass1"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "5": "3"
+    }, 
+    "category": "simple user", 
+    "e-mail": "martin@mail.com", 
+    "name": "Martin Regex", 
+    "password": "Rgdh!hd"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "1": "10", 
+      "8": "3"
+    }, 
+    "category": "simple user", 
+    "e-mail": "lobby@mail.com", 
+    "name": "Lobbby Martinez", 
+    "password": "12334"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "7": "2", 
+      "8": "6"
+    }, 
+    "category": "simple user", 
+    "e-mail": "hannah@mail.com", 
+    "name": "Hannah Lepons", 
+    "password": "mypass1"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "5": "2", 
+      "7": "1", 
+      "8": "3"
+    }, 
+    "category": "simple user", 
+    "e-mail": "kevin@mail.com", 
+    "name": "Kevin Serand", 
+    "password": "easypassword"
+  }, 
+  {
+    "_id": null, 
+    "cart": {
+      "1": "2", 
+      "8": "3"
+    }, 
+    "category": "simple user", 
+    "e-mail": "sarah@mail.com", 
+    "name": "Sarah Walker", 
+    "password": "sarah1wow"
+  }
+]
