@@ -6,7 +6,8 @@
 ```docker run -d -p 27017:27017 --name mongodb1 mongo:4.0.4```
 
 Η δημιουργία της βάσης δεδομένων και των collection της έγινε αυτόματα από τον python κώδικα
-
-```db = client['DSMarkets']
+```
+   db = client['DSMarkets']
    users = db['Users'] 
-   products = db['Products']```
+   products = db['Products']
+```
