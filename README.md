@@ -7,7 +7,8 @@
 
 Η δημιουργία της βάσης δεδομένων και των collection της έγινε αυτόματα από τον python κώδικα
 ```
-   db = client['DSMarkets']
-   users = db['Users'] 
-   products = db['Products']
+   client = MongoClient('mongodb://localhost:27017/') # Connect to MongoDB
+   db = client['DSMarkets'] # Create database
+   users = db['Users'] # Create collections
+   products = db['Products'] 
 ```
