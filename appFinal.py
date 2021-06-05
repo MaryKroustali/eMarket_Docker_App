@@ -72,6 +72,63 @@ def login():
     else:
         return Response("Wrong email or password.",mimetype='application/json', status=400) # return error message
 
+# find product - not sorted
+@app.route('/getProduct', methods=['GET'])
+def get_product():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "name" in data and not "category" and not "id":
+        return Response("Information incomplete", status=500, mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+		# Find product(s) by name
+        if "name" in data:
+            productsList = products.find({'name':data["name"]})
+            productsArray = []
+		    # store data in dictionary
+            for product in productsList:
+		        # print name, descr, price, category, id
+                product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
+                productsArray.append(product)
+		        # If product(s) found, print
+            if productsArray != []:
+                return Response(json.dumps(productsArray,indent=4), status=200, mimetype='application/json')
+            else: # if no product found
+                return Response("No product(s) found named '"+data["name"]+"'.")
+		# Find product(s) by category
+        elif "category" in data:
+            productsList = products.find({'category':data["category"]})
+            productsArray = []
+		     # store data in dictionary
+            for product in productsList:
+		         # print name, descr, price, category, id  
+                 product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
+                 productsArray.append(product)
+		    # If product(s) found, print
+            if productsArray != []:
+                return Response(json.dumps(productsArray,indent=4), status=200, mimetype='application/json')
+            else: # if no product found
+                return Response("No product(s) found in category '"+data["category"]+"'.")
+		# Find product(s) by id
+        elif "id" in data:
+            product = products.find_one({'id':data["id"]})
+            if product != None:
+		        # print name, descr, price, category, id
+                product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
+                return Response(json.dumps(product,indent=4), status=200, mimetype='application/json')
+            else: # if no product found
+                return Response("No product found with id '"+data["id"]+"'.")
+    else: # If uuid was not valid
+        return Response("User can't be verified.", status=401) # error message
 
 # add product
 @app.route('/addProduct', methods=['POST'])
