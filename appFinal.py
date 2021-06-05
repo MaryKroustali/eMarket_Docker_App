@@ -130,6 +130,70 @@ def get_product():
     else: # If uuid was not valid
         return Response("User can't be verified.", status=401) # error message
 
+# add product to cart
+@app.route('/addToCart', methods=['PATCH'])
+def add_to_cart():
+    # user data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # check if no user data missing
+    if not "e-mail" in data or not "id" in data or not "quantity":
+        return Response("Complete your email, product id and quantity\n",status=500,mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        # find product by id
+        product = products.find_one({'id':data["id"]})
+        if product != None:
+            # check if enough products in stock
+            if int(data["quantity"]) <= int(product["stock"]):
+                total_cost = 0;
+                quantity = 0;
+                price = 0;
+                # find user
+                user = users.find_one({'e-mail':data["e-mail"]})
+                # if user has a cart, update cart
+                if "cart" in user:
+                    user["cart"].update({product["id"]: data["quantity"]})
+                    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':user["cart"]}})
+                    for product_id in user["cart"]:
+                        # find cart product in db
+                        item = products.find_one({'id':product_id})
+                        # find product's price
+                        price = (float)(item["price"])
+                        # get quantity from user data
+                        quantity = user["cart"].get(product_id)
+                        # calculate total cost
+                        total_cost = total_cost + price * float(quantity)
+                        # return success message
+                    return Response("Product added succesfully to cart!\nYour cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
+                # if no cart exists, create
+                else:
+                    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':{product["id"]: data["quantity"]}}})
+                    # find cart product in db
+                    item = products.find_one({'id':product["id"]})
+                    # find product's price
+                    price = (float)(item["price"])
+                    # get quantity from user data
+                    quantity = data["quantity"]
+                    # calculate total cost
+                    total_cost = total_cost + price * float(quantity)
+                    # return success message
+                    return Response("Product added succesfully to cart!\nYour cart:\n"+json.dumps({product["id"]: data["quantity"]},indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
+            else: # if product out of stock
+                return Response("Product not available, out of stock.\n")
+        else: # if no product found
+            return Response("No product found with id '"+data["id"]+"'.\n")
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
+
 # add product
 @app.route('/addProduct', methods=['POST'])
 def add_product():
