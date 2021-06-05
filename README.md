@@ -13,3 +13,18 @@
    users = db['Users'] # Create collections
    products = db['Products'] 
 ```
+## Web service
+### Entrypoint: Create account 
+### Entrypoint: Login
+### Entrypoint: Get product
+### Entrypoint: Add product to cart
+### Entrypoint: Get cart
+### Entrypoint: Delete product from cart
+### Entrypoint: Buy products
+### Entrypoint: Get order history
+### Entrypoint: Delete account
+### Entrypoint: Add product
+### Entrypoint: Delete product
+### Entrypoint: Update product
+
+## Containerize
