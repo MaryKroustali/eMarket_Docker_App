@@ -194,6 +194,44 @@ def add_to_cart():
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
 
+# get cart
+@app.route('/getCart', methods=['GET'])
+def get_cart():
+    # user data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "e-mail" in data:
+        return Response("No user selected!\n", status=500, mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        total_cost = 0;
+        quantity = 0;
+        price = 0;
+        # find user
+        user = users.find_one({'e-mail':data["e-mail"]})
+        for product_id in user["cart"]:
+            # find cart product in db
+            item = products.find_one({'id':product_id})
+            # find product's price
+            price = (float)(item["price"])
+            # get quantity from user data
+            quantity = user["cart"].get(product_id)
+            # calculate total cost
+            total_cost = total_cost + price * float(quantity)
+            # return success message
+        return Response("Your cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')	
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
+
+
 # add product
 @app.route('/addProduct', methods=['POST'])
 def add_product():
