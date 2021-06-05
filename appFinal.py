@@ -231,6 +231,53 @@ def get_cart():
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
 
+# delete product from cart
+@app.route('/deleteFromCart', methods=['PATCH'])
+def delete_from_cart():
+    # user data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # check if no user data missing
+    if not "e-mail" in data or not "id" in data:
+        return Response("Complete your email and product you want to delete!\n",status=500,mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        # find user by email
+        user = users.find_one({'e-mail':data["e-mail"]})
+        # find product in cart
+        if data["id"] in user["cart"]:
+            total_cost = 0;
+            quantity = 0;
+            price = 0;
+            # updated cart, delete product with id
+            new_cart = user["cart"].pop(data["id"])
+            # update db
+            users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
+            # calculate tatal cost for cart
+            for product_id in user["cart"]:
+                # find cart product in db
+                item = products.find_one({'id':product_id})
+                # find product's price
+                price = (float)(item["price"])
+                # get quantity from user data
+                quantity = user["cart"].get(product_id)
+                # calculate total cost
+                total_cost = total_cost + price * float(quantity)
+            # return success message
+            return Response("Product deleted succesfully!\nYour cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
+        else: # if no product found
+            return Response("No product found with id '"+data["id"]+"' in your cart.\n")
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
+
 
 # add product
 @app.route('/addProduct', methods=['POST'])
