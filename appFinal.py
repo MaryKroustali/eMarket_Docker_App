@@ -372,7 +372,38 @@ def get_history():
             return Response("No order history founs!\n")
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
+# delete user -- screenshots
+@app.route('/deleteUser', methods=['DELETE'])
+def delete_user():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if no id given
+    if not "e-mail" in data:
+        return Response("No e-mail specified!\n",status=500,mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        user = users.find_one({'e-mail':data["e-mail"]})
+        # if user exists delete
+        if user != None:
+            # delete product
+            users.delete_one(user)
+            return Response (user["name"] + " was deleted.\n", status=200, mimetype='application/json')
+        else: 
+            # print message
+            return Response("No user found with email " + data["e-mail"]+"\n")
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
 
+# Admin 
 # add product
 @app.route('/addProduct', methods=['POST'])
 def add_product():
@@ -451,8 +482,9 @@ def update_product():
     else: # if no product found
             return Response("No product with id:" + data["id"])
 
+# Helping methods
 # Get users
-@app.route('/getallusers', methods=['GET'])
+'''@app.route('/getallusers', methods=['GET'])
 def get_all_users():
     iterable = users.find({})
     output = []
@@ -492,7 +524,7 @@ def create_admin():
         users.insert_one(data) # add admin
         return Response(data['name']+" was added as an admin", mimetype='application/json', status=200) # return success message
     else: # id user already in database 
-        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
+        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message'''
 
 
 # Εκτέλεση flask service σε debug mode, στην port 5000. 
