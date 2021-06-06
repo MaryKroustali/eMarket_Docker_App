@@ -72,7 +72,7 @@ def login():
     else:
         return Response("Wrong email or password.",mimetype='application/json', status=400) # return error message
 
-# find product - not sorted
+# find product
 @app.route('/getProduct', methods=['GET'])
 def get_product():
     # Request JSON data
@@ -99,11 +99,13 @@ def get_product():
 		        # print name, descr, price, category, id
                 product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
                 productsArray.append(product)
+                # sort array by name
+                productsArray = sorted(productsArray, key = lambda i: i['name'])
 		        # If product(s) found, print
             if productsArray != []:
-                return Response(json.dumps(productsArray,indent=4), status=200, mimetype='application/json')
+                return Response(json.dumps(productsArray,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
-                return Response("No product(s) found named '"+data["name"]+"'.")
+                return Response("No product(s) found named '"+data["name"]+"'.\n")
 		# Find product(s) by category
         elif "category" in data:
             productsList = products.find({'category':data["category"]})
@@ -113,22 +115,25 @@ def get_product():
 		         # print name, descr, price, category, id  
                  product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
                  productsArray.append(product)
+                  # sort array by price
+                 productsArray = sorted(productsArray, key = lambda i: i['price'])
 		    # If product(s) found, print
             if productsArray != []:
-                return Response(json.dumps(productsArray,indent=4), status=200, mimetype='application/json')
+                return Response(json.dumps(productsArray,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
-                return Response("No product(s) found in category '"+data["category"]+"'.")
+                return Response("No product(s) found in category '"+data["category"]+"'.\n")
 		# Find product(s) by id
         elif "id" in data:
             product = products.find_one({'id':data["id"]})
             if product != None:
 		        # print name, descr, price, category, id
                 product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
-                return Response(json.dumps(product,indent=4), status=200, mimetype='application/json')
+                return Response(json.dumps(product,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
-                return Response("No product found with id '"+data["id"]+"'.")
+                return Response("No product found with id '"+data["id"]+"'.\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.", status=401) # error message
+        return Response("User can't be verified.\n", status=401) # error message
+
 
 # add product to cart
 @app.route('/addToCart', methods=['PATCH'])
