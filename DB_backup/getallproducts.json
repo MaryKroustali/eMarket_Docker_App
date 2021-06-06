@@ -79,5 +79,14 @@
     "name": "milk", 
     "price": "1.5", 
     "stock": "40"
+  }, 
+  {
+    "_id": null, 
+    "category": "decoration", 
+    "description": "plastic tulipe", 
+    "id": "9", 
+    "name": "plastic plant", 
+    "price": "4", 
+    "stock": "20"
   }
 ]
