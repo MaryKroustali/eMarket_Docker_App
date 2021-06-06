@@ -283,6 +283,66 @@ def delete_from_cart():
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
 
+# buy products
+@app.route('/buyProducts', methods=['PATCH'])
+def buy_products():
+    # user data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # check if no user data missing
+    if not "e-mail" in data or not "card-number" in data:
+        return Response("Complete your email and card number!\n", status=500, mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        # find user by email
+        user = users.find_one({'e-mail':data["e-mail"]})
+        # check if cart is not empty
+        if user["cart"] != {}:
+            if len(data["card-number"]) == 16:
+                order = [] # store orders
+                # if history already exists
+                if "orderHistory" in user:
+                    order.append(user["orderHistory"])  # store old orders
+                    order.append({'order':user["cart"]}) # add new order
+                else: # if no history exists
+                    order = {'order':user["cart"]} # store new order
+             # add order(s) to history
+                users.update_one({'e-mail':data["e-mail"]},{'$set': {'orderHistory':order}})
+
+                # delete cart
+                new_cart = {}
+                users.update({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
+        
+                receipt = 'product id.....quantity.......price\n' # receipt format
+            # check if card number contains 16 digits
+            
+                total_cost = 0;
+                quantity = 0;
+                price = 0;
+                for item in user["cart"]: # for each item in cart
+                    product = products.find_one({'id':item})
+                    price = (float)(product["price"]) # find product's price
+                    quantity = user["cart"].get(item) # get quantity
+                    cost = price * float(quantity) # cost for each item
+                    total_cost = total_cost + cost # calculate total cost 
+                    # receipt
+                    receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+"............"+str(cost)+"€\n"
+                # return receipt and total cost
+                return Response("Your receipt:\n"+receipt+"---------------------------------------\n    Total Cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
+            else: # if card number not 16 digits
+                return Response("Invalid card number. Card number must be 16 digits.\n")
+        else: # if cart empty
+            return Response("No products in cart!\n")
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
 
 # add product
 @app.route('/addProduct', methods=['POST'])
