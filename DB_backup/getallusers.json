@@ -8,27 +8,18 @@
   }, 
   {
     "_id": null, 
-    "cart": {
-      "1": "10", 
-      "3": "1", 
-      "6": "2"
-    }, 
+    "cart": {}, 
     "category": "simple user", 
     "e-mail": "karenmc@hotmail.com", 
     "name": "Karen McDonald", 
-    "password": "Nhsydjs"
-  }, 
-  {
-    "_id": null, 
-    "cart": {
-      "6": "5", 
-      "7": "1", 
-      "8": "2"
+    "orderHistory": {
+      "order": {
+        "1": "10", 
+        "3": "1", 
+        "6": "2"
+      }
     }, 
-    "category": "simple user", 
-    "e-mail": "marshalle@mail.com", 
-    "name": "Eve Marshall", 
-    "password": "marshalls234"
+    "password": "Nhsydjs"
   }, 
   {
     "_id": null, 
@@ -39,17 +30,6 @@
   }, 
   {
     "_id": null, 
-    "cart": {
-      "1": "5", 
-      "8": "4"
-    }, 
-    "category": "simple user", 
-    "e-mail": "raemiond@mail.com", 
-    "name": "Natasha Reamond", 
-    "password": "364758"
-  }, 
-  {
-    "_id": null, 
     "category": "simple user", 
     "e-mail": "newton@mail.com", 
     "name": "Newton Edmond", 
@@ -57,67 +37,60 @@
   }, 
   {
     "_id": null, 
-    "cart": {
-      "1": "5"
-    }, 
     "category": "simple user", 
-    "e-mail": "margot@mail.com", 
+    "e-mail": "margotIl@mail.com", 
     "name": "Margot Il", 
     "password": "mypass1"
   }, 
   {
     "_id": null, 
-    "cart": {
-      "5": "3"
-    }, 
-    "category": "simple user", 
-    "e-mail": "martin@mail.com", 
-    "name": "Martin Regex", 
-    "password": "Rgdh!hd"
-  }, 
-  {
-    "_id": null, 
-    "cart": {
-      "1": "10", 
-      "8": "3"
-    }, 
+    "cart": "8", 
     "category": "simple user", 
     "e-mail": "lobby@mail.com", 
-    "name": "Lobbby Martinez", 
+    "name": "Lobby Martinez", 
+    "orderHistory": [
+      {
+        "order": {
+          "6": "4", 
+          "7": "1", 
+          "8": "1", 
+          "9": "2"
+        }
+      }, 
+      {
+        "order": {
+          "1": "4", 
+          "3": "4"
+        }
+      }
+    ], 
     "password": "12334"
   }, 
   {
     "_id": null, 
-    "cart": {
-      "7": "2", 
-      "8": "6"
-    }, 
     "category": "simple user", 
-    "e-mail": "hannah@mail.com", 
-    "name": "Hannah Lepons", 
-    "password": "mypass1"
+    "e-mail": "marshalle@mail.com", 
+    "name": "Eve Marshall", 
+    "password": "marshalls234"
   }, 
   {
     "_id": null, 
-    "cart": {
-      "5": "2", 
-      "7": "1", 
-      "8": "3"
-    }, 
+    "cart": {}, 
     "category": "simple user", 
-    "e-mail": "kevin@mail.com", 
-    "name": "Kevin Serand", 
-    "password": "easypassword"
-  }, 
-  {
-    "_id": null, 
-    "cart": {
-      "1": "2", 
-      "8": "3"
-    }, 
-    "category": "simple user", 
-    "e-mail": "sarah@mail.com", 
-    "name": "Sarah Walker", 
-    "password": "sarah1wow"
+    "e-mail": "mia@mail.com", 
+    "name": "Scarlet Mia", 
+    "orderHistory": [
+      {
+        "order": "4"
+      }, 
+      {
+        "order": {
+          "1": "2", 
+          "7": "3", 
+          "8": "4"
+        }
+      }
+    ], 
+    "password": "120977"
   }
 ]
