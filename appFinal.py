@@ -344,6 +344,35 @@ def buy_products():
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
 
+# get order history
+@app.route('/getHistory', methods=['GET'])
+def get_history():
+    # user data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # check if no user data missing
+    if not "e-mail" in data:
+        return Response("Complete your email!\n", status=500, mimetype="application/json")
+    # Get uuid from header type authorization
+    uuid = request.headers.get('Authorization')
+    # Check if uuid is valid
+    verify = is_session_valid(uuid)
+    if verify:
+        # find user by email
+        user = users.find_one({'e-mail':data["e-mail"]})
+        # check if user has an order history, return
+        if "orderHistory" in user:
+            return Response ("Your order history:\n"+json.dumps(user["orderHistory"],indent=4)+"\n", status=200, mimetype='application/json')
+        else: # if no history exists
+            return Response("No order history founs!\n")
+    else: # If uuid was not valid
+        return Response("User can't be verified.\n", status=401) # error message
+
 # add product
 @app.route('/addProduct', methods=['POST'])
 def add_product():
