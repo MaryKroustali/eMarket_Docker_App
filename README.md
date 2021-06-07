@@ -58,17 +58,21 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Όλα τα παραπάνω επιστρέφουν για κάθε προϊόν το όνομα, την περιγραφή, την τιμή, την κατηγορία και τον κωδικό του, 
 ```{'name':product["name"],'description':product["description"],'price': product["price"],'category':product["category"],'id':product["id"]}``` 
+
 Επιπλέον, σε περίπτωση που δε βρεθεί κανένα προϊόν για τις παραπάνω αναζητήσεις επιστρέφεται κατάλληλο μήνυμα. 
 
 Η υλοποίηση του entrypoint περιλαμβάνει τρεις επιμέρους αναζητήσεις:
 
 -Με βάση όνομα προϊόντος:
+
 <img src="screenshots/getProductName.png">
 
 -Με βάση κατηγορία προϊόντος:
-<img src="screenshots/getProductCategory.png">
+
+<img src="screenshots/getProductCat.png">
 
 -Με βάση τον κωδικό προϊόντος:
+
 <img src="screenshots/getProductId.png">
 
 
