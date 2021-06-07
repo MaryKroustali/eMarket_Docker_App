@@ -16,12 +16,16 @@
 ## Web service
 ### Entrypoint: Create account <!--simple user, admin extra method-->
 Με το συγκεκριμένο entrypoint γίνεται η εγγραφή ενός χρήστη στο σύστημα με το ονοματεπώνυμό του, το email του και ένα password. Γίνεται αναζήτηση του email που έδωσε ο χρήστης αν υπάρχει ήδη στη βάση, ως εγγρεγραμμένος, ώστε να ειδοποιηθεί με κατάλληλο μήνυμα:
+
 ```users.find({"e-mail":data["e-mail"]}).count() == 0 ```
+
 Αν το email δεν υπάρχει, τότε επισυνάπτεται αυτόματα στα στοιχεία του χρήστη η ένδειξη "simple user"
-``` category = {'category':'simple user'}
+``` 
+    category = {'category':'simple user'}
     data.update(category)
 ```
 και, τέλος, εισάγεται στην βάση.
+
 ```users.insert_one(data)```
 
 Παρακάτω παρουσιάζεται η υλοποίηση του entrypoint. Αρχικά, για 2 χρήστες με επιτυχία και έπειτα για χρήστη με email πoυ προυπάρχει στη βάση.
