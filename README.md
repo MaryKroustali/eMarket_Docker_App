@@ -25,7 +25,7 @@
 και, τέλος, εισάγεται στην βάση, ```users.insert_one(data)```.
 
 Παρακάτω παρουσιάζεται η υλοποίηση του entrypoint. Αρχικά, για 2 χρήστες με επιτυχία και έπειτα για χρήστη με email πoυ προυπάρχει στη βάση.
-<img src="screenshots/createSimpleUser.jpg">
+<img src="screenshots/createSimpleUser.png">
 
 ### Entrypoint: Login <!--simple user, admin does not login-->
 ### Entrypoint: Get product 
