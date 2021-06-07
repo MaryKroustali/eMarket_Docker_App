@@ -14,7 +14,7 @@
    products = db['Products'] 
 ```
 ## Web service
-### Entrypoint: Create account <!--simple user, admin extra method-->
+### Entrypoint: Create account
 Με το συγκεκριμένο entrypoint γίνεται η εγγραφή ενός χρήστη στο σύστημα με το ονοματεπώνυμό του, το email του και ένα password. Γίνεται αναζήτηση του email που έδωσε ο χρήστης αν υπάρχει ήδη στη βάση, ως εγγρεγραμμένος, ```users.find({"e-mail":data["e-mail"]}).count() == 0 ```, ώστε να ειδοποιηθεί με κατάλληλο μήνυμα.
 
 Αν το email δεν υπάρχει, τότε επισυνάπτεται αυτόματα στα στοιχεία του χρήστη η ένδειξη "simple user"
@@ -24,11 +24,19 @@
 ```
 και, τέλος, εισάγεται στην βάση, ```users.insert_one(data)```.
 
-Παρακάτω παρουσιάζεται η υλοποίηση του entrypoint. Αρχικά, για 2 χρήστες με επιτυχία και έπειτα για χρήστη με email πoυ προυπάρχει στη βάση.
+Παρακάτω παρουσιάζεται η υλοποίηση του entrypoint. Αρχικά, για 2 χρήστες με επιτυχία και έπειτα για χρήστη με email πoυ υπάρχει ήδη στη βάση.
 
 <img src="screenshots/createSimpleUser.png">
 
-### Entrypoint: Login <!--simple user, admin does not login-->
+### Entrypoint: Login
+Το entrypoint αναφέρεται στην σύνδεση χρήστη στο σύστημα. Συγκεκριμένα, ο χρήστης δίνει το email του και το password που όρισε κατά την εγγραφή του. Πραγματοποιέιται αναζήτηση στη βάση με αυτά ```users.find_one({"e-mail":data["e-mail"], "password":data["password"]})``` και αν βρεθεί ο χρήστης, τότε καλέιται η συνάρτηση create_session() με παράμετρο το email του χρήστη. 
+
+Η συνάρτηση create_session() δημιουργεί έναν μοναδικό κωδικό που επιστρέφεται στον χρήστη μετά από επιτυχημένη σύνδεση στο σύστημα ώστε να χρησιμοποιεί τις υπηεσίες του super market. Αν τα στοιχεία που εισήγαγε ο χρήστης είναι λανθασμένα, επιστρέφεται κατάλληλο μήνυμα.
+
+Παρακάτω παρουσιάζεται η υλοποίηση του endpoint. Αρχικά γίνεται επιτυχημένη σύνδεση και έπειτα δίνεται λάθος email και λάθος password.
+<img src="screenshots/login.png">
+
+
 ### Entrypoint: Get product 
 ### Entrypoint: Add product to cart
 ### Entrypoint: Get cart
