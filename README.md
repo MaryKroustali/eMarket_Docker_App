@@ -15,6 +15,7 @@
 ```
 ## Web service
 ### Entrypoint: Create account <!--simple user, admin extra method-->
+Με το συγκεκριμένο entrypoint γίνεται η εγγραφή ενός χρήστη στο σύστημα με το ονοματεπώνυμό του, το email του και ένα password. Γίνεται αναζήτηση του email που έδωσε ο χρήστης αν υπάρχει ήδη στη βάση, ως εγγρεγραμμένος, ώστε να ειδοποιηθεί με κατάλληλο μήνυμα: \n 
 ### Entrypoint: Login <!--simple user, admin does not login-->
 ### Entrypoint: Get product 
 ### Entrypoint: Add product to cart
