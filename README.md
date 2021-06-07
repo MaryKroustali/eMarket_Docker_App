@@ -56,7 +56,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 αποτέλεσμα. 
 
 Όλα τα παραπάνω επιστρέφουν για κάθε προϊόν το όνομα, την περιγραφή, την τιμή, την κατηγορία και τον κωδικό του:
-```{'name':product["name"],'description':product["description"],'price': product["price"],'category':product["category"],'id':product["id"]}``` 
+```{'name':product["name"],'description':product["description"],'price':product["price"],'category':product["category"],'id':product["id"]}``` 
 
 Επιπλέον, σε περίπτωση που δε βρεθεί κανένα προϊόν από τις παραπάνω αναζητήσεις επιστρέφεται κατάλληλο μήνυμα. 
 
