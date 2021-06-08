@@ -76,18 +76,19 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 <img src="screenshots/getProductId.png">
 
 ### Entrypoint: Add product to cart
-Μέσω αυτού το entrypoint ο χρήστης έχει τη δυνατότητα να προσθέσει προϊόντα στο καλάθι αγορών του. Προκειμένου να γίνει εισαγωγή προϊόντος στο καλάθι ενός χρήστης θα πρέπει 
-εκέινος να δώσει το email του, το id του προϊόντος και την ποσότητα που επιθυμεί. Το σύστημα, αρχικά, αναζητά αν το προϊόν που ζήτησε ο χρήστης υπάρχει στη βάση, βάσει id που 
-δόθηκε, `products.find_one({'id':data["id"]})`, και αν βρεθεί κάποιο προϊόν ελέγχεται αν υπάρχει αρκετό απόθεμα, `int(data["quantity"]) <= int(product["stock"])`, ώστε 
-να πραγματοποιηθεί η αγορά του. Γίνεται αναζήτηση του χρήστη στην βάση, με το e-mail που έδωσε, `users.find_one({'e-mail':data["e-mail"]})`, ώστε να ελεγχθεί αν ο χρήστης 
-έχει ήδη κάποια προϊότα στο καλάθι του ή αν πρόκειται για το πρώτο προϊόν που προσθέτει. 
+Μέσω αυτού το entrypoint ο χρήστης έχει τη δυνατότητα να προσθέσει προϊόντα στο καλάθι αγορών του.
+
+Προκειμένου να γίνει εισαγωγή προϊόντος στο καλάθι ενός χρήστης θα πρέπει εκείνος να δώσει το email του, το id του προϊόντος και την ποσότητα που επιθυμεί. Το σύστημα, αρχικά, 
+αναζητά αν το προϊόν που ζήτησε ο χρήστης υπάρχει στη βάση, βάσει id που δόθηκε, `products.find_one({'id':data["id"]})`, και αν βρεθεί κάποιο προϊόν ελέγχεται αν υπάρχει αρκετό 
+απόθεμα, `int(data["quantity"]) <= int(product["stock"])`, ώστε να πραγματοποιηθεί η αγορά του. Γίνεται αναζήτηση του χρήστη στην βάση, με το e-mail που έδωσε, 
+`users.find_one({'e-mail':data["e-mail"]})`, ώστε να ελεγχθεί αν ο χρήστης έχει ήδη κάποια προϊότα στο καλάθι του ή αν πρόκειται για το πρώτο προϊόν που προσθέτει. 
 
 Αν στο καλάθι υπάρχουν και άλλα προϊόντα τότε στο dictionary που τα περιέχει προστίθεται το dictionary με το νέο προϊόν ώστε να ενημερωθεί το καλάθι στη βάση διατηρώντας τα 
 προϊόντα που προυπήρχαν σε αυτό.
 `
    if "cart" in user:
    user["cart"].update({product["id"]: data["quantity"]}
-   users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':user["cart"]}})```. 
+   users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':user["cart"]}})```
 `
 Έπειτα, υπολογίζεται το συνολικό κόστος των προϊόντων που περιέχονται στο καλάθι. Για κάθε προϊόν παίρνουμε την τιμή του, από το collection προϊόντων, και την ποσότητα, από το 
 καλάθι του χρήστη. Το συνολικό κόστος προκύπτει αν για κάθε προϊόν πολλαπλασιάζουμε την τιμή με την ποσότητα του.
@@ -121,9 +122,22 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 <img src="screenshots/addCart2.png">
 
-*Τα κόστη και τα αποθέματα των προϊόντων μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)*
-
 ### Entrypoint: Get cart
+Με αυτό το entrypoint ο χρήστης μπορεί να δεί τα προϊόντα που έχει ως τώρα στο καλάθι του και το κόστος τους.
+
+Ο χρήστης καλείται να δώσει το email του, με το οποίο γίνεται αναζήτηση στη βάση για το καλάθι του, `user = users.find_one({'e-mail':data["e-mail"]})`. Έπειτα, για κάθε προϊόν 
+στο καλάθι υπολογίζεται το κόστος του. 
+`
+   for product_id in user["cart"]:
+      item = products.find_one({'id':product_id})
+      price = (float)(item["price"])
+      quantity = user["cart"].get(product_id)
+      total_cost = total_cost + price * float(quantity)
+`
+
+Για την υλοποίηση του entrypoint χρησιμοποιήθηκε το καλάθι με τα τέσσερα προϊόντα του προηγούμενου entrypoint.
+<img src="screenshots/getCart.png">
+
 ### Entrypoint: Delete product from cart
 ### Entrypoint: Buy products
 ### Entrypoint: Get order history
@@ -132,5 +146,8 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 ### Entrypoint: Add product 
 ### Entrypoint: Delete product
 ### Entrypoint: Update product
+
+*Τα στοιχεία των προϊόντων που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)
+Τα στοιχεία των χρηστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerize
