@@ -120,7 +120,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Στην συνέχεια, έγινε προσπάθεια για προσθήκη ενός προϊόντος με απόθεμα 0 και προσπάθεια για προσθήκη προϊόντος με μή έγκυρο id. 
 
-<img src="screenshots/addCart2.png">
+<img src="screenshots/addCart3.png">
 
 ### Entrypoint: Get cart
 Με αυτό το entrypoint ο χρήστης μπορεί να δει τα προϊόντα που έχει ως τώρα στο καλάθι του και το κόστος τους.
@@ -167,6 +167,44 @@ dictionary.
 <img src="screenshots/deleteCart.png">
 
 ### Entrypoint: Buy products
+Με το συγκεκριμένο entrypoint ο χρήστης μπορεί να αγοράσει τα προϊόντα που έχει στο καλάθι του.
+
+Δίνει το email του και τον αριθμό της κάρτας του. Αρχικά, ελέγχεται αν το καλάθι του έχει προϊόντα και αν ο αριθμός της κάρτας του αποτελέιται από 16 ψηφία. Σε διαφορετική 
+περίπτωση επιστρέφεται μήνυμα λάθους.
+```
+   if user["cart"] != {}:
+      if len(data["card-number"]) == 16:
+```
+
+Στην συνέχεια, το καλάθι του χρήστη πρέπει να προστεθεί στο ιστορικά αγορών του. Αν υπάρχει ήδη κάποιο ιστορικό με προηγούμενες παραγγελίες, τότε δημιουργείται πίνακας στον 
+οποίο προστίθονται οι μέχρι τώρα αγορές του χρήστη και η καινούρια. 
+```
+   order = []
+   if "orderHistory" in user:
+      order.append(user["orderHistory"])  # store old orders
+      order.append({'order':user["cart"]}) # add new order
+```
+Ενώ αν πρόκειται για την πρώτη του αγορά προστίθεται μόνο αυτή η παραγγελία `order = {'order':user["cart"]} # store new order`.
+
+Και για τις δύο περιπτώσεις το ιστορικό του χρήστη ενημερώνεται με τον πίνακα παραγγελιών και έπειτα το καλάθι του αδειάζει ώστε να χρησιμοποιηθεί σε επόμενη παραγγελία.
+```
+   users.update_one({'e-mail':data["e-mail"]},{'$set': {'orderHistory':order}})
+   new_cart = {}
+   users.update({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
+```
+Τέλος, εκτυπώνεται η απόδειξη του χρήστη, η οποία περιλαμβάνει τον κωδικό του προϊόντος, την ποσότητα που αγόρασε ο χρήστης και το κόστος κάθε προϊόντος ανάλογα των τεμαχίων που
+αγόρασε, `cost = price * float(quantity)`:
+
+`
+receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+"............"+str(cost)+"€\n"
+`
+
+Στον χρήστη εκτυπώνεται η απόδειξη και το συνολικό κόστος της αγοράς του.
+
+Για την υλοποιήση έγινε η αγορά των τεσσέρων προϊόντων που προστέθηκαν στο καλάθι κατά το entrypoint [Add product to cart]
+
+<imh src="screenshots/buy.png">
+
 ### Entrypoint: Get order history
 ### Entrypoint: Delete account
 <!--admin does not login-->
@@ -174,8 +212,8 @@ dictionary.
 ### Entrypoint: Delete product
 ### Entrypoint: Update product
 
-*Τα στοιχεία των προϊόντων που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)
+*Τα στοιχεία των προϊόντων που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)*
 
-Τα στοιχεία των χρηστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
+*Τα στοιχεία των χρηστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerize
