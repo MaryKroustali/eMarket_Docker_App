@@ -113,13 +113,13 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Για την υλοποίηση του endpoint προστέθηκαν διαδοχικά τέσσερα προϊόντα στο καλάθι.
 
-<img src="screenshots/addCart1">
+<img src="screenshots/addCart1.png">
 
-<img src="screenshots/addCart2">
+<img src="screenshots/addCart2.png">
 
 Στην συνέχεια, έγινε προσπάθεια για προσθήκη ενός προϊόντος με απόθεμα 0 και προσπάθεια για προσθήκη προϊόντος με μή έγκυρο id. 
 
-<img src="screenshots/addCart2">
+<img src="screenshots/addCart2.png">
 
 ### Entrypoint: Get cart
 ### Entrypoint: Delete product from cart
