@@ -48,7 +48,7 @@ def create_simple_user():
         data.update(category)
         users.insert_one(data) # add user
         return Response("User "+data['name']+" was added.", mimetype='application/json', status=200) # return success message
-    else: # id user already in database 
+    else: # if user already in database 
         return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
 
 # login user
