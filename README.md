@@ -48,10 +48,18 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 Μέσω αυτού του enrtypoint ο χρήστης μπορεί να αναζητά προϊόντα με βάση το όνομα προϊόντος, την κατηγορία του ή το μοναδικό κωδικό του. Ανάλογα με το στοιχείο που εισάγει ο 
 χρήστης εκτελείται το αντίστοιχο query αναζήτησης. 
 
-Στην περίπτωση αναζήτησης βάσει ονόματος εκτεκλείται: `products.find({'name':data["name"]})`. Αν βρεθoύν ένα ή παραπάνω προϊόντα τότε αποθηκεύονται σε πίνακα, οποίος ταξινομείται με βάση τα ονόματα των προϊόντων, `sorted(productsArray, key = lambda i: i['name'])`.
+Στην περίπτωση αναζήτησης βάσει ονόματος, αν βρεθoύν ένα ή παραπάνω προϊόντα τότε αποθηκεύονται σε πίνακα, οποίος ταξινομείται με βάση τα ονόματα των προϊόντων, 
+```python
+   productsList = products.find({'name':data["name"]})
+   productsArray = sorted(productsArray, key = lambda i: i['name'])
+```
 
-Στην περίπτωση αναζήτησης βάσει κατηγορίας εκτελείται το query `products.find({'category':data["category"]})`. Αν βρεθούν αποτελέσματα, δημιουργείται πίνακας όπου 
-αποθηκέυονται τα προϊόντα και, στην συνέχεια, ταξινομείται με βάση την τιμή αυτών, `sorted(productsArray, key = lambda i: i['price'])`. 
+Στην περίπτωση αναζήτησης βάσει κατηγορίας, αν βρεθούν αποτελέσματα, δημιουργείται πίνακας όπου 
+αποθηκέυονται τα προϊόντα και, στην συνέχεια, ταξινομείται με βάση την τιμή αυτών.
+```python
+   productsList = products.find({'category':data["category"]})
+   productsArray = sorted(productsArray, key = lambda i: i['price'])
+```
 
 Στην περίπτωση αναζήτησης με το id του προϊόντος, εκτελείται `products.find_one({'id':data["id"]})`. Επειδή, το id είναι μοναδικό για κάθε προιόν, επιστρέφεται πάντα ένα 
 αποτέλεσμα. 
@@ -228,13 +236,58 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 
 <img src="screenshots/deleteUser.png">
 
-<!--admin does not login-->
+*Τα παρακάτω entrypoint αφορούν τους διαχειριστές του συστήματος.*
+
+Για τη δημιουργία διαχειριστών δημιουργήθηκε ειδική μέθοδος, ανάλογη της δημιουργίας απλού χρήστη, με category = admin, η οποία βρίσκεται σε σχόλια στο τέλος του αρχείου 
+[appFinal.py](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/appFinal.py). Οι διαχείριστες μπορούν να εκτελέσουν τα παρακάτω entrypoints χωρίς να συνδεθούν στο 
+σύστημα.
+
 ### Entrypoint: Add product 
+Ο διαχειριστής εισάγει προϊόντα στη βάση, στο collection products. 
+
+Ο διαχειριστής πρέπει να καθορίσει τα εξής στοιχεία για κάθε προϊόν: id, όνομα, τιμή, κατηγορία, τεμάχια σε απόθεμα και περιγραφή. Αρχικά, ελέγχεται αν αυτό το id έχει 
+ξαναχρησιμοποιηθεί στη βάση, αφού θα πρέπει να είναι μοναδικό, `products.find({"id":data["id"]}).count() == 0`. Αν δεν υπάρχει, το προϊόν εισάγεται, 
+` products.insert_one(data)`, διαφορετικά, εμφανίζεται μήνυμα λάθους.
+
+Παρακάτω υλοποιείται η εισαγωγή προϊόντων, αρχικά, με επιτυχία και έπειτα με ελλειπή στοιχεία και id που υπάρχει ήδη στη βάση.
+
+<img src="screenshots/addProduct.png">
+
 ### Entrypoint: Delete product
+Με αυτό το entrypoint ο διαχειριστής διαγράφει προϊόν από τη βάση. 
+
+Αρχικά, ζητείται το id του προϊόντος προς διαγραφή. Αναζητείται στη βάση αν υπάρχει το προϊόν, `products.find_one({'id':data["id"]})` και έπειτα διαγράφεται, 
+`products.delete_one(product)`. Αν δεν υπάρχει στη βάση, εκτυπώνεται κατάλληλο μήνυμα. 
+
+Για την υλοποίηση αυτού, αρχικά, γίνεται επιτυχή διαγραφή προϊόντος. Έπειτα, αναζητείται προϊόν με βάση το όνομα του, ενώ πρέπει να δίνεται το id, και με id που δεν βρίσκεται 
+καταχωρημένο στη βάση.
+
+<img src="screenshots/deleteProduct.png">
+
 ### Entrypoint: Update product
+Ο διαχειριστής εκτελεί αυτό το entrypoint με σκοπό να ενημερώσει τα στοιχεία ενός προϊόντος. 
+
+Ζητείται το στοιχείο προς αλλαγή και το id του προϊόντος ώστε ελεγχεί η υπαρξή του στη βάση. Αν το προϊόν βρεθεί, ανάλογα το στοιχείο που πρέπει να τροποποιηθεί, το όνομα, την 
+τιμή, την περιγραφή ή το απόθεμα, εκτελέιται το αντίστοιχο update query:
+```python
+ if "name" in data:
+   products.update_one({'id':data["id"]},{'$set': {'name':data["name"]}})
+ if "price" in data:
+   products.update_one({'id':data["id"]},{'$set': {'price':data["price"]}})
+ if "description" in data:
+   products.update_one({'id':data["id"]},{'$set': {'description':data["description"]}})
+ if "stock" in data:
+   products.update_one({'id':data["id"]},{'$set': {'stock':data["stock"]}})
+```
+
+Αν το id δεν υπάρχει στη βάση εμφανίζεται ανάλογο μήνυμα.
+
+Για την υλοποίηση του, αρχικά, ενημερώνεται το απόθεμα ενός προϊόντος, και έπειτα, δίνονται ελειπή στοιχεία προς αναζήτηση.
+
+<img src="screenshots/updateProduct.png">
 
 *Τα στοιχεία των προϊόντων που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)*
 
-*Τα στοιχεία των χρηστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
+*Τα στοιχεία των χρηστών/διαχειριστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerize
