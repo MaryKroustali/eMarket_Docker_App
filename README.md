@@ -123,22 +123,49 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 <img src="screenshots/addCart2.png">
 
 ### Entrypoint: Get cart
-Με αυτό το entrypoint ο χρήστης μπορεί να δεί τα προϊόντα που έχει ως τώρα στο καλάθι του και το κόστος τους.
+Με αυτό το entrypoint ο χρήστης μπορεί να δει τα προϊόντα που έχει ως τώρα στο καλάθι του και το κόστος τους.
 
 Ο χρήστης καλείται να δώσει το email του, με το οποίο γίνεται αναζήτηση στη βάση για το καλάθι του, `user = users.find_one({'e-mail':data["e-mail"]})`. Έπειτα, για κάθε προϊόν 
 στο καλάθι υπολογίζεται το κόστος του. 
-`
+```
    for product_id in user["cart"]:
       item = products.find_one({'id':product_id})
       price = (float)(item["price"])
       quantity = user["cart"].get(product_id)
       total_cost = total_cost + price * float(quantity)
-`
+```
 
-Για την υλοποίηση του entrypoint χρησιμοποιήθηκε το καλάθι με τα τέσσερα προϊόντα του προηγούμενου entrypoint.
+Για την υλοποίηση χρησιμοποιήθηκε το καλάθι με τα τέσσερα προϊόντα του προηγούμενου entrypoint.
+
 <img src="screenshots/getCart.png">
 
 ### Entrypoint: Delete product from cart
+Το entrypoint αυτό δίνει στον χρήστη την δυνατότητα να διαγράφει ένα προϊόν από το καλάθι του. 
+
+Ο χρήστης πρέπει να καθορίζει το email του και το id του προϊόντος που θέλει να διαγράψει. Αρχικά, γίνεται έλεγχος αν υπάρχει το συγκεκριμένο προϊόν στο καλάθι του χρήστη βάσει 
+του id. Αν βρεθεί, αποθηκεύεται τοπικά το καλάθι του χρήστη σε ένα dictionary και από αυτό αφαρείται το id του προϊόντος. Έπειτα, γίνεται ενημέρωση του καλαθιού στη βάση με το 
+dictionary. 
+```
+   new_cart = user["cart"].pop(data["id"])
+   users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
+```
+
+Για το νέο καλάθι του χρήστη υπολογίζεται το συνολικό κόστος των προϊόντων και επιστρέφεται το ενωμερωμένο καλάθι.
+```
+   for product_id in user["cart"]:
+      item = products.find_one({'id':product_id})
+      price = (float)(item["price"])
+      quantity = user["cart"].get(product_id)
+      total_cost = total_cost + price * float(quantity)
+```
+
+Αν το προϊόν που θελει να διαγράψει ο χρήστης δεν περιέχεται στο καλάθι του, επιστρέφεται κατάλληλο μήνυμα.
+
+Για την υλοποίηση του entrypoint έγινε εισαγωγή δύο προϊόντων σττο καλάθ ενός χρήστη και έπειτα διαγραφή του ενός από αυτά, επιπλέον αναζητήθηκε και προϊόν με id που δεν υπάρχει 
+στο καλάθι.
+
+<img src="screenshots/deleteCart.png">
+
 ### Entrypoint: Buy products
 ### Entrypoint: Get order history
 ### Entrypoint: Delete account
