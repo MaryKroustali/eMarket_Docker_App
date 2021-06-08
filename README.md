@@ -3,8 +3,9 @@
 Για την υλοποίηση του παρακάτω πληροφοριακού συστήματος σε Python χρησιμοποιήθηκε Flask server για την υλοποίηση του web service και MongoDB για την αποθήκευση δεδομένων.
 </br>
 Αρχικά, δημιουργήθηκε ένα container της MongoDB με όνομα mongodb1 με την παρακάτω εντολή:
-
-`docker run -d -p 27017:27017 --name mongodb1 mongo:4.0.4`
+```shell
+   docker run -d -p 27017:27017 --name mongodb1 mongo:4.0.4
+```
 
 Η δημιουργία της βάσης δεδομένων και των collection της έγινε αυτόματα από τον python κώδικα
 ```python
@@ -295,8 +296,11 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 (https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerization
-Για το container του web service, αρχικά δημιουργήθγηκε ένα image για το αρχείο appFinal.py, το αρχείο Dockerfile.
-
+Για το container του web service, αρχικά δημιουργήθγηκε ένα image για το αρχείο appFinal.py, το αρχείο Dockerfile. Για να δημιουργήσουμε το image από το Dockerfile 
+χρησιμοποιήθηκε η εντολή
+```shell
+   docker build -t image_name .
+```
 Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml.
 
 ### Dockerfile
