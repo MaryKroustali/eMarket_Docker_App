@@ -7,22 +7,22 @@
 `docker run -d -p 27017:27017 --name mongodb1 mongo:4.0.4`
 
 Η δημιουργία της βάσης δεδομένων και των collection της έγινε αυτόματα από τον python κώδικα
-`
+```
    client = MongoClient('mongodb://localhost:27017/') # Connect to MongoDB
    db = client['DSMarkets'] # Create database
    users = db['Users'] # Create collections
    products = db['Products'] 
-`
+```
 ## Web service
 ### Entrypoint: Create account
 Με το συγκεκριμένο entrypoint γίνεται η εγγραφή ενός χρήστη στο σύστημα με το ονοματεπώνυμό του, το email του και ένα password. Γίνεται αναζήτηση του email που έδωσε ο χρήστης 
 αν υπάρχει ήδη στη βάση, ως εγγρεγραμμένος, ```users.find({"e-mail":data["e-mail"]}).count() == 0 ```, ώστε να ειδοποιηθεί με κατάλληλο μήνυμα.
 
 Αν το email δεν υπάρχει, τότε επισυνάπτεται αυτόματα στα στοιχεία του χρήστη η ένδειξη "simple user"
-`
+```
     category = {'category':'simple user'}
     data.update(category)
-`
+```
 και, τέλος, εισάγεται στην βάση, `users.insert_one(data)`.
 
 Παρακάτω παρουσιάζεται η υλοποίηση του entrypoint. Αρχικά, για 2 χρήστες με επιτυχία και έπειτα για χρήστη με email πoυ υπάρχει ήδη στη βάση.
@@ -85,29 +85,29 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Αν στο καλάθι υπάρχουν και άλλα προϊόντα τότε στο dictionary που τα περιέχει προστίθεται το dictionary με το νέο προϊόν ώστε να ενημερωθεί το καλάθι στη βάση διατηρώντας τα 
 προϊόντα που προυπήρχαν σε αυτό.
-`
+```
    if "cart" in user:
    user["cart"].update({product["id"]: data["quantity"]}
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':user["cart"]}})```
-`
+```
 Έπειτα, υπολογίζεται το συνολικό κόστος των προϊόντων που περιέχονται στο καλάθι. Για κάθε προϊόν παίρνουμε την τιμή του, από το collection προϊόντων, και την ποσότητα, από το 
 καλάθι του χρήστη. Το συνολικό κόστος προκύπτει αν για κάθε προϊόν πολλαπλασιάζουμε την τιμή με την ποσότητα του.
-`
+```
    for product_id in user["cart"]:
       item = products.find_one({'id':product_id})
       price = (float)(item["price"])
       quantity = user["cart"].get(product_id)
       total_cost = total_cost + price * float(quantity)
-`
+```
 
 Αν στο καλάθι δεν υπάρχουν άλλα προϊόντα, τότε προστίθεται μόνο αυτό αυτό το προϊόν στο καλάθι του χρήστη και υπολογίζεται το συνολικό κόστος μόνο από το κόστος αυτού.
-`
+```
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':{product["id"]: data["quantity"]}}})
    item = products.find_one({'id':product["id"]})
    price = (float)(item["price"])
    quantity = data["quantity"]
    total_cost = total_cost + price * float(quantity)
-`
+```
 Για της δύο παραπάνω περιπτώσεις επιστρέφεται το καλάθι του χρήστη με όλα τα προϊόντα που περιέχει ως τώρα καθώς και το συνολικό κόστους τους. 
 
 Στην περίπτωση που το προϊόν δεν είναι διαθέσιμο λόγω αποθέματος ή δεν βρέθηκε στην βάση το id που έδωσε ο χρήστης, επισρέφεται κατάλληλο μήνυμα. 
@@ -148,6 +148,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 ### Entrypoint: Update product
 
 *Τα στοιχεία των προϊόντων που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)
+
 Τα στοιχεία των χρηστών που χρησιμποιήθηκαν ενδεικτικά για την υλοποίηση του web service μπορούν να βρεθούν στο [DB_backup/getallusers.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerize
