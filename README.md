@@ -7,7 +7,7 @@
 `docker run -d -p 27017:27017 --name mongodb1 mongo:4.0.4`
 
 Η δημιουργία της βάσης δεδομένων και των collection της έγινε αυτόματα από τον python κώδικα
-```
+```python
    client = MongoClient('mongodb://localhost:27017/') # Connect to MongoDB
    db = client['DSMarkets'] # Create database
    users = db['Users'] # Create collections
@@ -19,7 +19,7 @@
 αν υπάρχει ήδη στη βάση, ως εγγρεγραμμένος, ```users.find({"e-mail":data["e-mail"]}).count() == 0 ```, ώστε να ειδοποιηθεί με κατάλληλο μήνυμα.
 
 Αν το email δεν υπάρχει, τότε επισυνάπτεται αυτόματα στα στοιχεία του χρήστη η ένδειξη "simple user"
-```
+```pyhton
     category = {'category':'simple user'}
     data.update(category)
 ```
@@ -85,14 +85,14 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Αν στο καλάθι υπάρχουν και άλλα προϊόντα τότε στο dictionary που τα περιέχει προστίθεται το dictionary με το νέο προϊόν ώστε να ενημερωθεί το καλάθι στη βάση διατηρώντας τα 
 προϊόντα που προυπήρχαν σε αυτό.
-```
+```python
    if "cart" in user:
    user["cart"].update({product["id"]: data["quantity"]}
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':user["cart"]}})```
 ```
 Έπειτα, υπολογίζεται το συνολικό κόστος των προϊόντων που περιέχονται στο καλάθι. Για κάθε προϊόν παίρνουμε την τιμή του, από το collection προϊόντων, και την ποσότητα, από το 
 καλάθι του χρήστη. Το συνολικό κόστος προκύπτει αν για κάθε προϊόν πολλαπλασιάζουμε την τιμή με την ποσότητα του.
-```
+```python
    for product_id in user["cart"]:
       item = products.find_one({'id':product_id})
       price = (float)(item["price"])
@@ -101,7 +101,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 ```
 
 Αν στο καλάθι δεν υπάρχουν άλλα προϊόντα, τότε προστίθεται μόνο αυτό αυτό το προϊόν στο καλάθι του χρήστη και υπολογίζεται το συνολικό κόστος μόνο από το κόστος αυτού.
-```
+```python
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':{product["id"]: data["quantity"]}}})
    item = products.find_one({'id':product["id"]})
    price = (float)(item["price"])
@@ -127,7 +127,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Ο χρήστης καλείται να δώσει το email του, με το οποίο γίνεται αναζήτηση στη βάση για το καλάθι του, `user = users.find_one({'e-mail':data["e-mail"]})`. Έπειτα, για κάθε προϊόν 
 στο καλάθι υπολογίζεται το κόστος του. 
-```
+```python
    for product_id in user["cart"]:
       item = products.find_one({'id':product_id})
       price = (float)(item["price"])
@@ -145,13 +145,13 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 Ο χρήστης πρέπει να καθορίζει το email του και το id του προϊόντος που θέλει να διαγράψει. Αρχικά, γίνεται έλεγχος αν υπάρχει το συγκεκριμένο προϊόν στο καλάθι του χρήστη βάσει 
 του id. Αν βρεθεί, αποθηκεύεται τοπικά το καλάθι του χρήστη σε ένα dictionary και από αυτό αφαρείται το id του προϊόντος. Έπειτα, γίνεται ενημέρωση του καλαθιού στη βάση με το 
 dictionary. 
-```
+```python
    new_cart = user["cart"].pop(data["id"])
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
 ```
 
 Για το νέο καλάθι του χρήστη υπολογίζεται το συνολικό κόστος των προϊόντων και επιστρέφεται το ενωμερωμένο καλάθι.
-```
+```python
    for product_id in user["cart"]:
       item = products.find_one({'id':product_id})
       price = (float)(item["price"])
@@ -171,14 +171,14 @@ dictionary.
 
 Δίνει το email του και τον αριθμό της κάρτας του. Αρχικά, ελέγχεται αν το καλάθι του έχει προϊόντα και αν ο αριθμός της κάρτας του αποτελέιται από 16 ψηφία. Σε διαφορετική 
 περίπτωση επιστρέφεται μήνυμα λάθους.
-```
+```python
    if user["cart"] != {}:
       if len(data["card-number"]) == 16:
 ```
 
 Στην συνέχεια, το καλάθι του χρήστη πρέπει να προστεθεί στο ιστορικά αγορών του. Αν υπάρχει ήδη κάποιο ιστορικό με προηγούμενες παραγγελίες, τότε δημιουργείται πίνακας στον 
 οποίο προστίθονται οι μέχρι τώρα αγορές του χρήστη και η καινούρια. 
-```
+```python
    order = []
    if "orderHistory" in user:
       order.append(user["orderHistory"])  # store old orders
@@ -187,7 +187,7 @@ dictionary.
 Ενώ αν πρόκειται για την πρώτη του αγορά προστίθεται μόνο αυτή η παραγγελία `order = {'order':user["cart"]} # store new order`.
 
 Και για τις δύο περιπτώσεις το ιστορικό του χρήστη ενημερώνεται με τον πίνακα παραγγελιών και έπειτα το καλάθι του αδειάζει ώστε να χρησιμοποιηθεί σε επόμενη παραγγελία.
-```
+```python
    users.update_one({'e-mail':data["e-mail"]},{'$set': {'orderHistory':order}})
    new_cart = {}
    users.update({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
@@ -201,9 +201,9 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 
 Στον χρήστη εκτυπώνεται η απόδειξη και το συνολικό κόστος της αγοράς του.
 
-Για την υλοποιήση έγινε η αγορά των τεσσέρων προϊόντων που προστέθηκαν στο καλάθι κατά το entrypoint [Add product to cart]
+Για την υλοποιήση έγινε η αγορά των τεσσέρων προϊόντων που προστέθηκαν στο καλάθι κατά το entrypoint Add product to cart
 
-<imh src="screenshots/buy.png">
+<img src="screenshots/buy.png">
 
 ### Entrypoint: Get order history
 ### Entrypoint: Delete account
