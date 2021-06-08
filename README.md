@@ -63,15 +63,15 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 Η υλοποίηση του entrypoint περιλαμβάνει τρεις επιμέρους αναζητήσεις:
 
--Με βάση όνομα προϊόντος:
+* Με βάση όνομα προϊόντος:
 
 <img src="screenshots/getProductName.png">
 
--Με βάση κατηγορία προϊόντος:
+* Με βάση κατηγορία προϊόντος:
 
 <img src="screenshots/getProductCat.png">
 
--Με βάση τον κωδικό προϊόντος:
+* Με βάση τον κωδικό προϊόντος:
 
 <img src="screenshots/getProductId.png">
 
@@ -121,7 +121,7 @@ super market. Αν τα στοιχεία που εισήγαγε ο χρήστη
 
 <img src="screenshots/addCart2.png">
 
-*Τα κόστη και τα αποθέματα των προϊόντων μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)
+*Τα κόστη και τα αποθέματα των προϊόντων μπορούν να βρεθούν στο [DB_backup/getallproducts.json](https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallproducts.json)*
 
 ### Entrypoint: Get cart
 ### Entrypoint: Delete product from cart
