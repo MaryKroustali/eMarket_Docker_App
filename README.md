@@ -297,9 +297,13 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 
 ## Containerization
 Για το container του web service, αρχικά δημιουργήθγηκε ένα image για το αρχείο appFinal.py, το αρχείο Dockerfile. Για να δημιουργήσουμε το image από το Dockerfile 
-χρησιμοποιήθηκε η εντολή
+χρησιμοποιήθηκε η εντολή:
 ```shell
-   docker build -t image_name .
+   docker build -t flask_img .
+```
+Έπειτα, δημιουργείται container, με όνομα flask, που συνδέεται με το παραπάνω image.
+```sh
+   docker run -d -p 5000:5000 --name flask flask_img
 ```
 Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml.
 
