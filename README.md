@@ -299,12 +299,12 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 
 Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml.
 
-# Dockerfile
+### Dockerfile
 Για το image του web service, αρχικά θεωρήσαμε ως βάση του τα ubuntu σε έκδοση 16.04 και εγκαταστάθηκαν τα απαραίτητα εργαλεία, python3, flask και pymongo. Στην συνέχεια, 
 δημιουργείται ένας φάκελος app όπου αποθηκεύεται το αρχείο appFinal.py και τα δεδομένα των json αρχείων. Τέλος, ορίζουμε την ερφαρμογή να χρησιμοποιεί την πορτα 5000, default 
 port του flask, και την εκτέλεση του appFinal.py αρχείου με python3. 
 
-# Docker-Compose
+### Docker-Compose
 Στο docker-compose.yml, αρχικά, καθορίζονται τα δύο services, containers. Για το πρώτο service καθορίζεται το container που χρησιμοποείται (mongodb1), το image στο οποίο 
 βασίζεται (mongo), το port στο οποίο τρέχει (27017) και δίνονται τα αρχεία json(data), ως backup. Για το δεύτερο service καθορίζεται το container (flask), το port (5000)
 και η βάση του στο mongodb container, από όπου παίρνει δεδομένα. 
