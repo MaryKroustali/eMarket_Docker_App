@@ -296,23 +296,28 @@ receipt = receipt + "    "+item+ "............."+user["cart"].get(item)+".......
 (https://github.com/MaryKroustali/Ergasia2_e18084/blob/main/DB_backup/getallusers.json)*
 
 ## Containerization
-Για το container του web service, αρχικά δημιουργήθγηκε ένα image για το αρχείο appFinal.py, το αρχείο Dockerfile. Για να δημιουργήσουμε το image από το Dockerfile 
+Για το container του web service, αρχικά δημιουργήθγηκε ένα image για το αρχείο appFinal.py. Για να δημιουργήσουμε το image από το Dockerfile 
 χρησιμοποιήθηκε η εντολή:
-```shell
-   docker build -t flask_img .
+```sh
+   docker build -t flask_image .
 ```
 Έπειτα, δημιουργείται container, με όνομα flask, που συνδέεται με το παραπάνω image.
 ```sh
    docker run -d -p 5000:5000 --name flask flask_img
 ```
-Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml.
+Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml, όπου μόνο μέσω αυτού ο χρήστης μπορεί να τρέξει το web service με την ακόλουθη εντολή:
+```sh
+   docker-compose up -d
+```
+Η παραπάνω εντολή διαβάζει το .yml αρχείο και δημιουργεί τοπικά τα δύο containers. Βέβεια, για να μπορέσουν να εκκινηθούν τα containers θα πρέπει τα ports 27017 και 5000 να μην 
+χρησιμοποιούνται από κάποιο άλλο container. 
 
 ### Dockerfile
-Για το image του web service, αρχικά θεωρήσαμε ως βάση του τα ubuntu σε έκδοση 16.04 και εγκαταστάθηκαν τα απαραίτητα εργαλεία, python3, flask και pymongo. Στην συνέχεια, 
-δημιουργείται ένας φάκελος app όπου αποθηκεύεται το αρχείο appFinal.py και τα δεδομένα των json αρχείων. Τέλος, ορίζουμε την ερφαρμογή να χρησιμοποιεί την πορτα 5000, default 
+Για το image του web service, αρχικά θεωρήσαμε ως βάση του τα ubuntu σε έκδοση 18.04 και εγκαταστάθηκαν τα απαραίτητα εργαλεία, python3, flask και pymongo. Στην συνέχεια, 
+δημιουργείται ένας φάκελος final όπου αποθηκεύεται το αρχείο appFinal.py και τα δεδομένα των json αρχείων. Τέλος, ορίζουμε την ερφαρμογή να χρησιμοποιεί την πορτα 5000, default 
 port του flask, και την εκτέλεση του appFinal.py αρχείου με python3. 
 
 ### Docker-Compose
-Στο docker-compose.yml, αρχικά, καθορίζονται τα δύο services, containers. Για το πρώτο service καθορίζεται το container που χρησιμοποείται (mongodb1), το image στο οποίο 
-βασίζεται (mongo), το port στο οποίο τρέχει (27017) και δίνονται τα αρχεία json(data), ως backup. Για το δεύτερο service καθορίζεται το container (flask), το port (5000)
-και η βάση του στο mongodb container, από όπου παίρνει δεδομένα. 
+Στο docker-compose.yml, αρχικά, καθορίζονται τα δύο services, containers. Για το πρώτο service καθορίζεται το container που θα δημιουργθεί τοπικά στον χρήστη (mongodb2), το 
+image στο οποίο θα βασίζεται (mongo), το port στο οποίο τρέχει (27017) και δίνονται τα αρχεία .json (data), ως backup. Για το δεύτερο service καθορίζεται η δημιουργία του 
+container (flask), το image που θα χρησιμοποιεί, το port επικοινωνίας (5000) και η βάση του στο mongodb container, από όπου παίρνει δεδομένα.
