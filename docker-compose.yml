@@ -1,0 +1,20 @@
+version: '2'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb2
+    ports:
+    - 27017:27017
+    volumes:
+    - ./data
+  flask-service:
+    image: flask_image
+    restart: always
+    container_name: flask2
+    depends_on:
+      - mongodb
+    ports:
+      - 5000:5000
+    environment:
+      - "MONGO_HOSTNAME=mongodb"
