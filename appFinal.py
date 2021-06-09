@@ -6,26 +6,27 @@ import uuid
 import time
 from bson import json_util
 
-# Connect local MongoDB
+# Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
 
-# Choose database
+# database
 db = client['DSMarkets']
-
-# Choose collections
+# collections
 users = db['Users']
 products = db['Products']
 
-# Initiate Flask App
+# Flask App
 app = Flask(__name__)
 
 users_sessions = {}
 
+# function for creating uid
 def create_session(username):
     user_uuid = str(uuid.uuid1())
     users_sessions[user_uuid] = (username, time.time())
     return user_uuid  
 
+# function for checking if uid is valid
 def is_session_valid(user_uuid):
     return user_uuid in users_sessions
 
@@ -47,11 +48,11 @@ def create_simple_user():
         category = {'category':'simple user'}
         data.update(category)
         users.insert_one(data) # add user
-        return Response("User "+data['name']+" was added.", mimetype='application/json', status=200) # return success message
+        return Response("User "+data['name']+" was added.\n", mimetype='application/json', status=200) 
     else: # if user already in database 
-        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message
+        return Response("A user with the given email already exists\n", mimetype='application/json', status=400) 
 
-# login user
+# login
 @app.route('/login', methods=['POST'])
 def login():
     data = None 
@@ -68,14 +69,91 @@ def login():
     if users.find_one({"e-mail":data["e-mail"], "password":data["password"]}):
 	# call function create session, return uuid
         user_uuid = create_session(data["e-mail"])
-        return Response('Userid for user ' + data['e-mail']+ ' : '+ user_uuid, mimetype='application/json',status=200) # return success message
+        return Response('Userid for user ' + data['e-mail']+ ' : '+ user_uuid+"\n", mimetype='application/json',status=200) 
     else:
-        return Response("Wrong email or password.",mimetype='application/json', status=400) # return error message
+        return Response("Wrong email or password.\n",mimetype='application/json', status=400) 
+
+# add product - admin
+@app.route('/addProduct', methods=['POST'])
+def add_product():
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "id" in data or not "name" in data or not "price" in data or not "category" in data or not "stock" in data or not "description" in data:
+        return Response("Id, Name, price, description, category and stock must be inserted.\n")
+    # if product not in database already
+    if products.find({"id":data["id"]}).count() == 0 :
+        products.insert_one(data) # add product
+        return Response('Product '+data['name']+' was added to database.\n', mimetype='application/json', status=200) 
+    else:
+        return Response('Product with id '+data['id']+' already exists in database.\n', mimetype='application/json', status=200)
+        
+
+# delete product - admin
+@app.route('/deleteProduct', methods=['DELETE'])
+def delete_product():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if no id given
+    if not "id" in data:
+        return Response("No product specified by id!\n",status=500,mimetype="application/json")
+    product = products.find_one({'id':data["id"]})
+    # if product exists
+    if product != None:
+        # delete product
+        products.delete_one(product)
+        return Response ("Product with id "+product["id"] + " was deleted.\n", status=200, mimetype='application/json')
+    else: # if no student product found
+        return Response("No product found with id " + data["id"]+"\n")
+
+
+# update product - admin
+@app.route('/updateProduct', methods=['UPDATE'])
+def update_product():
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    # if no id given
+    if not "id" in data:
+        return Response("No product specified by id!\n",status=500,mimetype="application/json")
+    # find product
+    product = products.find_one({'id':data["id"]})
+    # if product exists
+    if product != None:
+        # update product by name
+        if "name" in data:
+            products.update_one({'id':data["id"]},{'$set': {'name':data["name"]}})
+        # update product by price
+        if "price" in data:
+            products.update_one({'id':data["id"]},{'$set': {'price':data["price"]}})
+        # update product by description
+        if "description" in data:
+            products.update_one({'id':data["id"]},{'$set': {'description':data["description"]}})
+        # update product by stock
+        if "stock" in data:
+            products.update_one({'id':data["id"]},{'$set': {'stock':data["stock"]}})
+        return Response("Product "+product["id"]+" updated successfully.\n", status=200, mimetype='application/json')
+    else: # if no product found
+            return Response("No product with id:" + data["id"]+"\n")
+         
 
 # find product
 @app.route('/getProduct', methods=['GET'])
 def get_product():
-    # Request JSON data
     data = None 
     try:
         data = json.loads(request.data)
@@ -90,55 +168,54 @@ def get_product():
     # Check if uuid is valid
     verify = is_session_valid(uuid)
     if verify:
-		# Find product(s) by name
+	# Find product(s) by name
         if "name" in data:
             productsList = products.find({'name':data["name"]})
             productsArray = []
-		    # store data in dictionary
+            # store data in dictionary
             for product in productsList:
-		        # print name, descr, price, category, id
+		# print name, descr, price, category, id
                 product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
                 productsArray.append(product)
                 # sort array by name
                 productsArray = sorted(productsArray, key = lambda i: i['name'])
-		        # If product(s) found, print
+	    # If product(s) found, print
             if productsArray != []:
                 return Response(json.dumps(productsArray,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
                 return Response("No product(s) found named '"+data["name"]+"'.\n")
-		# Find product(s) by category
+	# Find product(s) by category
         elif "category" in data:
             productsList = products.find({'category':data["category"]})
             productsArray = []
-		     # store data in dictionary
+	    # store data in dictionary
             for product in productsList:
-		         # print name, descr, price, category, id  
+		 # print name, descr, price, category, id  
                  product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
                  productsArray.append(product)
-                  # sort array by price
+                 # sort array by price
                  productsArray = sorted(productsArray, key = lambda i: i['price'])
-		    # If product(s) found, print
+            # If product(s) found, print
             if productsArray != []:
                 return Response(json.dumps(productsArray,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
                 return Response("No product(s) found in category '"+data["category"]+"'.\n")
-		# Find product(s) by id
+	# Find product by id
         elif "id" in data:
             product = products.find_one({'id':data["id"]})
             if product != None:
-		        # print name, descr, price, category, id
+		# print name, descr, price, category, id
                 product = {'name': product["name"], 'description': product["description"], 'price': product["price"],  'category':product["category"], 'id':product["id"]}
                 return Response(json.dumps(product,indent=4)+"\n", status=200, mimetype='application/json')
             else: # if no product found
                 return Response("No product found with id '"+data["id"]+"'.\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
 
 # add product to cart
 @app.route('/addToCart', methods=['PATCH'])
 def add_to_cart():
-    # user data
     data = None 
     try:
         data = json.loads(request.data)
@@ -146,7 +223,7 @@ def add_to_cart():
         return Response("bad json content",status=500,mimetype='application/json')
     if data == None:
         return Response("bad request",status=500,mimetype='application/json')
-    # check if no user data missing
+    # check if no data missing
     if not "e-mail" in data or not "id" in data or not "quantity":
         return Response("Complete your email, product id and quantity\n",status=500,mimetype="application/json")
     # Get uuid from header type authorization
@@ -177,7 +254,6 @@ def add_to_cart():
                         quantity = user["cart"].get(product_id)
                         # calculate total cost
                         total_cost = total_cost + price * float(quantity)
-                        # return success message
                     return Response("Product added succesfully to cart!\nYour cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
                 # if no cart exists, create
                 else:
@@ -190,19 +266,17 @@ def add_to_cart():
                     quantity = data["quantity"]
                     # calculate total cost
                     total_cost = total_cost + price * float(quantity)
-                    # return success message
                     return Response("Product added succesfully to cart!\nYour cart:\n"+json.dumps({product["id"]: data["quantity"]},indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
             else: # if product out of stock
                 return Response("Product not available, out of stock.\n")
         else: # if no product found
             return Response("No product found with id '"+data["id"]+"'.\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
 # get cart
 @app.route('/getCart', methods=['GET'])
 def get_cart():
-    # user data
     data = None 
     try:
         data = json.loads(request.data)
@@ -231,15 +305,13 @@ def get_cart():
             quantity = user["cart"].get(product_id)
             # calculate total cost
             total_cost = total_cost + price * float(quantity)
-            # return success message
         return Response("Your cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')	
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
 # delete product from cart
 @app.route('/deleteFromCart', methods=['PATCH'])
 def delete_from_cart():
-    # user data
     data = None 
     try:
         data = json.loads(request.data)
@@ -247,7 +319,7 @@ def delete_from_cart():
         return Response("bad json content",status=500,mimetype='application/json')
     if data == None:
         return Response("bad request",status=500,mimetype='application/json')
-    # check if no user data missing
+    # check if no data missing
     if not "e-mail" in data or not "id" in data:
         return Response("Complete your email and product you want to delete!\n",status=500,mimetype="application/json")
     # Get uuid from header type authorization
@@ -266,7 +338,7 @@ def delete_from_cart():
             new_cart = user["cart"].pop(data["id"])
             # update db
             users.update_one({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
-            # calculate tatal cost for cart
+            # calculate total cost for cart
             for product_id in user["cart"]:
                 # find cart product in db
                 item = products.find_one({'id':product_id})
@@ -276,17 +348,15 @@ def delete_from_cart():
                 quantity = user["cart"].get(product_id)
                 # calculate total cost
                 total_cost = total_cost + price * float(quantity)
-            # return success message
             return Response("Product deleted succesfully!\nYour cart:\n"+json.dumps(user["cart"],indent=4)+"\nTotal cost: "+str(total_cost)+"€\n", status=200, mimetype='application/json')
         else: # if no product found
             return Response("No product found with id '"+data["id"]+"' in your cart.\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
 # buy products
 @app.route('/buyProducts', methods=['PATCH'])
 def buy_products():
-    # user data
     data = None 
     try:
         data = json.loads(request.data)
@@ -294,7 +364,7 @@ def buy_products():
         return Response("bad json content",status=500,mimetype='application/json')
     if data == None:
         return Response("bad request",status=500,mimetype='application/json')
-    # check if no user data missing
+    # check if no data missing
     if not "e-mail" in data or not "card-number" in data:
         return Response("Complete your email and card number!\n", status=500, mimetype="application/json")
     # Get uuid from header type authorization
@@ -306,6 +376,7 @@ def buy_products():
         user = users.find_one({'e-mail':data["e-mail"]})
         # check if cart is not empty
         if user["cart"] != {}:
+            # check if card number contains 16 digits
             if len(data["card-number"]) == 16:
                 order = [] # store orders
                 # if history already exists
@@ -314,16 +385,12 @@ def buy_products():
                     order.append({'order':user["cart"]}) # add new order
                 else: # if no history exists
                     order = {'order':user["cart"]} # store new order
-             # add order(s) to history
+                # add order(s) to history
                 users.update_one({'e-mail':data["e-mail"]},{'$set': {'orderHistory':order}})
-
                 # delete cart
                 new_cart = {}
                 users.update({'e-mail':data["e-mail"]},{'$set': {'cart':new_cart}})
-        
                 receipt = 'product id.....quantity.......price\n' # receipt format
-            # check if card number contains 16 digits
-            
                 total_cost = 0;
                 quantity = 0;
                 price = 0;
@@ -342,12 +409,11 @@ def buy_products():
         else: # if cart empty
             return Response("No products in cart!\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
 # get order history
 @app.route('/getHistory', methods=['GET'])
 def get_history():
-    # user data
     data = None 
     try:
         data = json.loads(request.data)
@@ -355,7 +421,7 @@ def get_history():
         return Response("bad json content",status=500,mimetype='application/json')
     if data == None:
         return Response("bad request",status=500,mimetype='application/json')
-    # check if no user data missing
+    # check if no data missing
     if not "e-mail" in data:
         return Response("Complete your email!\n", status=500, mimetype="application/json")
     # Get uuid from header type authorization
@@ -372,10 +438,10 @@ def get_history():
             return Response("No order history founs!\n")
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401) # error message
-# delete user -- screenshots
+        
+# delete user
 @app.route('/deleteUser', methods=['DELETE'])
 def delete_user():
-    # Request JSON data
     data = None 
     try:
         data = json.loads(request.data)
@@ -392,97 +458,16 @@ def delete_user():
     verify = is_session_valid(uuid)
     if verify:
         user = users.find_one({'e-mail':data["e-mail"]})
-        # if user exists delete
+        # if user exists, delete
         if user != None:
-            # delete product
             users.delete_one(user)
             return Response (user["name"] + " was deleted.\n", status=200, mimetype='application/json')
-        else: 
-            # print message
+        else:
             return Response("No user found with email " + data["e-mail"]+"\n")
     else: # If uuid was not valid
-        return Response("User can't be verified.\n", status=401) # error message
+        return Response("User can't be verified.\n", status=401)
 
-# Admin 
-# add product
-@app.route('/addProduct', methods=['POST'])
-def add_product():
-    # Request JSON data
-    data = None 
-    try:
-        data = json.loads(request.data)
-    except Exception as e:
-        return Response("bad json content",status=500,mimetype='application/json')
-    if data == None:
-        return Response("bad request",status=500,mimetype='application/json')
-    if not "id" in data or not "name" in data or not "price" in data or not "category" in data or not "stock" in data or not "description" in data:
-        return Response("Id, Name, price, description, category and stock must be inserted.")
-    if products.find({"id":data["id"]}).count() == 0 :
-        products.insert_one(data) # add product
-        return Response('Product '+data['name']+' was added to database.', mimetype='application/json', status=200) # return success message
-    else:
-        return Response('Product with id '+data['id']+' already exists in database.', mimetype='application/json', status=200) # return success message
-
-# delete product
-@app.route('/deleteProduct', methods=['DELETE'])
-def delete_product():
-    # Request JSON data
-    data = None 
-    try:
-        data = json.loads(request.data)
-    except Exception as e:
-        return Response("bad json content",status=500,mimetype='application/json')
-    if data == None:
-        return Response("bad request",status=500,mimetype='application/json')
-    # if no id given
-    if not "id" in data:
-        return Response("No product specified by id!",status=500,mimetype="application/json")
-    product = products.find_one({'id':data["id"]})
-        # if product exists delete
-    if product != None:
-        # delete product
-        products.delete_one(product)
-        return Response ("Product with id "+product["id"] + " was deleted.", status=200, mimetype='application/json')
-    else: # if no student product found
-        # print message
-        return Response("No product found with id " + data["id"])
-
-# update product
-@app.route('/updateProduct', methods=['UPDATE'])
-def update_product():
-    # Request JSON data
-    data = None 
-    try:
-        data = json.loads(request.data)
-    except Exception as e:
-        return Response("bad json content",status=500,mimetype='application/json')
-    if data == None:
-        return Response("bad request",status=500,mimetype='application/json')
-    # if no id given
-    if not "id" in data:
-        return Response("No product specified by id!",status=500,mimetype="application/json")
-     # find product
-    product = products.find_one({'id':data["id"]})
-     # if product exists
-    if product != None:
-        # update product by name
-        if "name" in data:
-            products.update_one({'id':data["id"]},{'$set': {'name':data["name"]}})
-            # update product by price
-        if "price" in data:
-            products.update_one({'id':data["id"]},{'$set': {'price':data["price"]}})
-            # update product by description
-        if "description" in data:
-            products.update_one({'id':data["id"]},{'$set': {'description':data["description"]}})
-            # update product by stock
-        if "stock" in data:
-            products.update_one({'id':data["id"]},{'$set': {'stock':data["stock"]}})
-            # return success message
-        return Response("Product "+product["id"]+" updated successfully.", status=200, mimetype='application/json')
-    else: # if no product found
-            return Response("No product with id:" + data["id"])
-
-# Helping methods
+#Helping methods
 # Get users
 '''@app.route('/getallusers', methods=['GET'])
 def get_all_users():
@@ -522,12 +507,11 @@ def create_admin():
         category = {'category':'admin'}
         data.update(category)
         users.insert_one(data) # add admin
-        return Response(data['name']+" was added as an admin", mimetype='application/json', status=200) # return success message
+        return Response(data['name']+" was added as an admin", mimetype='application/json', status=200)
     else: # id user already in database 
-        return Response("A user with the given email already exists", mimetype='application/json', status=400) # return error message'''
-
+        return Response("A user with the given email already exists", mimetype='application/json', status=400)
+'''
 
 # Εκτέλεση flask service σε debug mode, στην port 5000. 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)[0]
-
