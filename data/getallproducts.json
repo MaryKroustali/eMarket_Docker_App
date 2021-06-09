@@ -1,0 +1,92 @@
+[
+  {
+    "_id": null, 
+    "category": "decoration", 
+    "description": "vanilla candle", 
+    "id": "0", 
+    "name": "candle", 
+    "price": "5", 
+    "stock": "10"
+  }, 
+  {
+    "_id": null, 
+    "category": "food", 
+    "description": "chinese rice", 
+    "id": "1", 
+    "name": "rice", 
+    "price": "2", 
+    "stock": "20"
+  }, 
+  {
+    "_id": null, 
+    "category": "food", 
+    "description": "snack", 
+    "id": "2", 
+    "name": "cookies", 
+    "price": "2", 
+    "stock": "0"
+  }, 
+  {
+    "_id": null, 
+    "category": "cleaning product", 
+    "description": "simple blue mop", 
+    "id": "3", 
+    "name": "mop", 
+    "price": "4", 
+    "stock": "30"
+  }, 
+  {
+    "_id": null, 
+    "category": "food", 
+    "description": "Thai food", 
+    "id": "4", 
+    "name": "noodles", 
+    "price": "2", 
+    "stock": "0"
+  }, 
+  {
+    "_id": null, 
+    "category": "drinks", 
+    "description": "minerall water", 
+    "id": "6", 
+    "name": "water", 
+    "price": "0.5", 
+    "stock": "1000"
+  }, 
+  {
+    "_id": null, 
+    "category": "food", 
+    "description": "unhealthy snack", 
+    "id": "5", 
+    "name": "chips", 
+    "price": "1", 
+    "stock": "100"
+  }, 
+  {
+    "_id": null, 
+    "category": "drinks", 
+    "description": "fiji water", 
+    "id": "7", 
+    "name": "water", 
+    "price": "3", 
+    "stock": "60"
+  }, 
+  {
+    "_id": null, 
+    "category": "drinks", 
+    "description": "", 
+    "id": "8", 
+    "name": "milk", 
+    "price": "1.5", 
+    "stock": "40"
+  }, 
+  {
+    "_id": null, 
+    "category": "decoration", 
+    "description": "plastic tulipe", 
+    "id": "9", 
+    "name": "plastic plant", 
+    "price": "4", 
+    "stock": "20"
+  }
+]

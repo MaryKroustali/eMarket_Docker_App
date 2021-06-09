@@ -1,0 +1,96 @@
+[
+  {
+    "_id": null, 
+    "category": "admin", 
+    "e-mail": "john@mail.com", 
+    "name": "John Doe", 
+    "password": "itsme"
+  }, 
+  {
+    "_id": null, 
+    "cart": {}, 
+    "category": "simple user", 
+    "e-mail": "karenmc@hotmail.com", 
+    "name": "Karen McDonald", 
+    "orderHistory": {
+      "order": {
+        "1": "10", 
+        "3": "1", 
+        "6": "2"
+      }
+    }, 
+    "password": "Nhsydjs"
+  }, 
+  {
+    "_id": null, 
+    "category": "admin", 
+    "e-mail": "maria@mail.org", 
+    "name": "Maria Kroustali", 
+    "password": "123"
+  }, 
+  {
+    "_id": null, 
+    "category": "simple user", 
+    "e-mail": "newton@mail.com", 
+    "name": "Newton Edmond", 
+    "password": "mypassword"
+  }, 
+  {
+    "_id": null, 
+    "category": "simple user", 
+    "e-mail": "margotIl@mail.com", 
+    "name": "Margot Il", 
+    "password": "mypass1"
+  }, 
+  {
+    "_id": null, 
+    "cart": "8", 
+    "category": "simple user", 
+    "e-mail": "lobby@mail.com", 
+    "name": "Lobby Martinez", 
+    "orderHistory": [
+      {
+        "order": {
+          "6": "4", 
+          "7": "1", 
+          "8": "1", 
+          "9": "2"
+        }
+      }, 
+      {
+        "order": {
+          "1": "4", 
+          "3": "4"
+        }
+      }
+    ], 
+    "password": "12334"
+  }, 
+  {
+    "_id": null, 
+    "category": "simple user", 
+    "e-mail": "marshalle@mail.com", 
+    "name": "Eve Marshall", 
+    "password": "marshalls234"
+  }, 
+  {
+    "_id": null, 
+    "cart": {}, 
+    "category": "simple user", 
+    "e-mail": "mia@mail.com", 
+    "name": "Scarlet Mia", 
+    "orderHistory": [
+      {
+        "order": "4"
+      }, 
+      {
+        "order": {
+          "1": "2", 
+          "7": "3", 
+          "8": "4"
+        }
+      }
+    ], 
+    "password": "120977"
+  }
+]
