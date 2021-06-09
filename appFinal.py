@@ -467,9 +467,9 @@ def delete_user():
     else: # If uuid was not valid
         return Response("User can't be verified.\n", status=401)
 
-#Helping methods
+'''#Helping methods
 # Get users
-'''@app.route('/getallusers', methods=['GET'])
+@app.route('/getallusers', methods=['GET'])
 def get_all_users():
     iterable = users.find({})
     output = []
