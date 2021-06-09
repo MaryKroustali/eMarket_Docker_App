@@ -312,14 +312,17 @@ port του flask, και την εκτέλεση του appFinal.py αρχεί�
 ```
 
 ## Containerization
-Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml, όπου μόνο μέσω αυτού ο χρήστης μπορεί να τρέξει το web service με την ακόλουθη εντολή:
-```sh
-   docker-compose up -d
-```
-Η παραπάνω εντολή διαβάζει το .yml αρχείο και δημιουργεί τοπικά τα δύο containers. Βέβαια, για να μπορέσουν να εκκινηθούν τα containers θα πρέπει τα ports 27017 και 5000 να μην 
-χρησιμοποιούνται από κάποιο άλλο container. 
+Για το τελικό στάδιο του containerization πρέπει να συνδεθούν τα containers του web service και του MongoDB. Για αυτό δημιουργήθηκε το αρχείο docker-compose.yml.
 
 ### Docker-Compose
 Στο docker-compose.yml, αρχικά, καθορίζονται τα δύο services, containers. Για το πρώτο service καθορίζεται το container που θα δημιουργθεί τοπικά στον χρήστη (mongodb2), το 
 image στο οποίο θα βασίζεται (mongo), το port στο οποίο τρέχει (27017) και δίνονται τα αρχεία .json (data), ως backup. Για το δεύτερο service καθορίζεται η δημιουργία του 
 container (flask), το image που θα χρησιμοποιεί, το port επικοινωνίας (5000) και η βάση του στο mongodb container, από όπου παίρνει δεδομένα.
+
+Ο χρήστης μπορεί να τρέξει το web service με την ακόλουθη εντολή:
+
+```sh
+   docker-compose up -d
+```
+Η παραπάνω εντολή διαβάζει το .yml αρχείο και δημιουργεί τοπικά τα δύο containers. Βέβαια, για να μπορέσουν να εκκινηθούν τα containers θα πρέπει τα ports 27017 και 5000 να μην 
+χρησιμοποιούνται από κάποιο άλλο container. Έπειτα, ο χρήστης μπορεί να χρησιμοποιεί curl εντολές για να έχει πρόσβαση στα διάφορα entrypoints. 
